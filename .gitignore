@@ -1,0 +1,10 @@
+build/
+*.mp4
+!demos/*.mp4
+*.mov
+*.engine
+*.plan
+*.onnx
+*.tar.gz
+videos/*/
+!videos/download.sh

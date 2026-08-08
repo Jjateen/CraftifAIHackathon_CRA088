@@ -1,0 +1,9 @@
+/home/jjateen/personal/pipegen/adas-lite/pipelines/perception.py:40: DeprecationWarning: Returning NumPy data types instead of Polygraphy `DataType`s from `get_input_metadata()` is deprecated and will be removed in Polygraphy 0.60.0.
+  yname = list(yolo.get_input_metadata().keys())[0]
+/home/jjateen/personal/pipegen/adas-lite/pipelines/perception.py:41: DeprecationWarning: Returning NumPy data types instead of Polygraphy `DataType`s from `get_input_metadata()` is deprecated and will be removed in Polygraphy 0.60.0.
+  yshape = list(yolo.get_input_metadata()[yname].shape)    # [1,3,h,w]
+/home/jjateen/personal/pipegen/adas-lite/pipelines/perception.py:43: DeprecationWarning: Returning NumPy data types instead of Polygraphy `DataType`s from `get_input_metadata()` is deprecated and will be removed in Polygraphy 0.60.0.
+  mname = list(midas.get_input_metadata().keys())[0]
+/home/jjateen/personal/pipegen/adas-lite/pipelines/perception.py:44: DeprecationWarning: Returning NumPy data types instead of Polygraphy `DataType`s from `get_input_metadata()` is deprecated and will be removed in Polygraphy 0.60.0.
+  mshape = list(midas.get_input_metadata()[mname].shape)   # [1,3,h,w]
+done 221 frames -> out_pipegen/front_annotated.mp4, out_pipegen/results_front.json

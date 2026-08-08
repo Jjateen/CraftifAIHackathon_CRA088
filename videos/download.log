@@ -1,0 +1,135 @@
+++ dirname /home/jjateen/personal/pipegen/adas-lite/videos/download.sh
++ cd /home/jjateen/personal/pipegen/adas-lite/videos
++ Y front/front_dashcam.mp4 'ytsearch1:highway driving dashcam raw footage 1080p'
++ yt-dlp -f 'bv*[height<=1080][ext=mp4]/bv*[height<=1080]' --no-playlist --download-sections '*00:00:30-00:02:00' -o front/front_dashcam.mp4 'ytsearch1:highway driving dashcam raw footage 1080p'
++ Y rear/rear_cam.mp4 'ytsearch1:rear dash cam footage highway driving'
++ yt-dlp -f 'bv*[height<=1080][ext=mp4]/bv*[height<=1080]' --no-playlist --download-sections '*00:00:30-00:02:00' -o rear/rear_cam.mp4 'ytsearch1:rear dash cam footage highway driving'
++ wait
++ Y carla/carla_front.mp4 'ytsearch1:CARLA simulator autopilot front camera driving town'
++ yt-dlp -f 'bv*[height<=1080][ext=mp4]/bv*[height<=1080]' --no-playlist --download-sections '*00:00:30-00:02:00' -o carla/carla_front.mp4 'ytsearch1:CARLA simulator autopilot front camera driving town'
+[youtube:search] Extracting URL: ytsearch1:rear dash cam footage highway driving
+[download] Downloading playlist: rear dash cam footage highway driving
+[youtube:search] query "rear dash cam footage highway driving": Downloading web client config
+[youtube:search] Extracting URL: ytsearch1:CARLA simulator autopilot front camera driving town
+[download] Downloading playlist: CARLA simulator autopilot front camera driving town
+[youtube:search] query "CARLA simulator autopilot front camera driving town": Downloading web client config
+[youtube:search] Extracting URL: ytsearch1:highway driving dashcam raw footage 1080p
+[download] Downloading playlist: highway driving dashcam raw footage 1080p
+[youtube:search] query "highway driving dashcam raw footage 1080p": Downloading web client config
+[youtube:search] query "CARLA simulator autopilot front camera driving town" page 1: Downloading API JSON
+[youtube:search] query "highway driving dashcam raw footage 1080p" page 1: Downloading API JSON
+[youtube:search] query "rear dash cam footage highway driving" page 1: Downloading API JSON
+[youtube:search] Playlist CARLA simulator autopilot front camera driving town: Downloading 1 items of 1
+[download] Downloading item 1 of 1
+[youtube] Extracting URL: https://www.youtube.com/watch?v=tH6O1T0g41c
+[youtube] tH6O1T0g41c: Downloading webpage
+[youtube:search] Playlist highway driving dashcam raw footage 1080p: Downloading 1 items of 1
+[download] Downloading item 1 of 1
+[youtube] Extracting URL: https://www.youtube.com/watch?v=BmIExj_IVQw
+[youtube] BmIExj_IVQw: Downloading webpage
+[youtube:search] Playlist rear dash cam footage highway driving: Downloading 1 items of 1
+[download] Downloading item 1 of 1
+[youtube] Extracting URL: https://www.youtube.com/watch?v=X_yoLHwNSRU
+[youtube] X_yoLHwNSRU: Downloading webpage
+[youtube] tH6O1T0g41c: Downloading ios player API JSON
+[youtube] BmIExj_IVQw: Downloading ios player API JSON
+WARNING: [youtube] YouTube said: ERROR - Precondition check failed.
+WARNING: [youtube] HTTP Error 400: Bad Request. Retrying (1/3)...
+[youtube] tH6O1T0g41c: Downloading ios player API JSON
+WARNING: [youtube] YouTube said: ERROR - Precondition check failed.
+WARNING: [youtube] HTTP Error 400: Bad Request. Retrying (1/3)...
+[youtube] BmIExj_IVQw: Downloading ios player API JSON
+WARNING: [youtube] YouTube said: ERROR - Precondition check failed.
+WARNING: [youtube] HTTP Error 400: Bad Request. Retrying (2/3)...
+[youtube] tH6O1T0g41c: Downloading ios player API JSON
+WARNING: [youtube] YouTube said: ERROR - Precondition check failed.
+WARNING: [youtube] HTTP Error 400: Bad Request. Retrying (2/3)...
+[youtube] BmIExj_IVQw: Downloading ios player API JSON
+WARNING: [youtube] YouTube said: ERROR - Precondition check failed.
+WARNING: [youtube] HTTP Error 400: Bad Request. Retrying (3/3)...
+[youtube] tH6O1T0g41c: Downloading ios player API JSON
+WARNING: [youtube] YouTube said: ERROR - Precondition check failed.
+WARNING: [youtube] HTTP Error 400: Bad Request. Retrying (3/3)...
+[youtube] BmIExj_IVQw: Downloading ios player API JSON
+WARNING: [youtube] YouTube said: ERROR - Precondition check failed.
+WARNING: [youtube] Unable to download API page: HTTP Error 400: Bad Request (caused by <HTTPError 400: Bad Request>)
+[youtube] tH6O1T0g41c: Downloading android player API JSON
+WARNING: [youtube] YouTube said: ERROR - Precondition check failed.
+WARNING: [youtube] Unable to download API page: HTTP Error 400: Bad Request (caused by <HTTPError 400: Bad Request>)
+[youtube] BmIExj_IVQw: Downloading android player API JSON
+[youtube] X_yoLHwNSRU: Downloading ios player API JSON
+WARNING: [youtube] YouTube said: ERROR - Precondition check failed.
+WARNING: [youtube] HTTP Error 400: Bad Request. Retrying (1/3)...
+[youtube] tH6O1T0g41c: Downloading android player API JSON
+WARNING: [youtube] YouTube said: ERROR - Precondition check failed.
+WARNING: [youtube] HTTP Error 400: Bad Request. Retrying (1/3)...
+[youtube] BmIExj_IVQw: Downloading android player API JSON
+WARNING: [youtube] YouTube said: ERROR - Precondition check failed.
+WARNING: [youtube] HTTP Error 400: Bad Request. Retrying (1/3)...
+[youtube] X_yoLHwNSRU: Downloading ios player API JSON
+WARNING: [youtube] YouTube said: ERROR - Precondition check failed.
+WARNING: [youtube] HTTP Error 400: Bad Request. Retrying (2/3)...
+[youtube] tH6O1T0g41c: Downloading android player API JSON
+WARNING: [youtube] YouTube said: ERROR - Precondition check failed.
+WARNING: [youtube] HTTP Error 400: Bad Request. Retrying (2/3)...
+[youtube] BmIExj_IVQw: Downloading android player API JSON
+WARNING: [youtube] YouTube said: ERROR - Precondition check failed.
+WARNING: [youtube] HTTP Error 400: Bad Request. Retrying (2/3)...
+[youtube] X_yoLHwNSRU: Downloading ios player API JSON
+WARNING: [youtube] YouTube said: ERROR - Precondition check failed.
+WARNING: [youtube] HTTP Error 400: Bad Request. Retrying (3/3)...
+[youtube] tH6O1T0g41c: Downloading android player API JSON
+WARNING: [youtube] YouTube said: ERROR - Precondition check failed.
+WARNING: [youtube] HTTP Error 400: Bad Request. Retrying (3/3)...
+[youtube] BmIExj_IVQw: Downloading android player API JSON
+WARNING: [youtube] YouTube said: ERROR - Precondition check failed.
+WARNING: [youtube] HTTP Error 400: Bad Request. Retrying (3/3)...
+[youtube] X_yoLHwNSRU: Downloading ios player API JSON
+WARNING: [youtube] YouTube said: ERROR - Precondition check failed.
+WARNING: [youtube] Unable to download API page: HTTP Error 400: Bad Request (caused by <HTTPError 400: Bad Request>)
+[youtube] tH6O1T0g41c: Downloading player 854a788e
+WARNING: [youtube] YouTube said: ERROR - Precondition check failed.
+WARNING: [youtube] Unable to download API page: HTTP Error 400: Bad Request (caused by <HTTPError 400: Bad Request>)
+WARNING: Only images are available for download. use --list-formats to see them
+ERROR: [youtube] BmIExj_IVQw: Requested format is not available. Use --list-formats for a list of available formats
+[download] Finished downloading playlist: highway driving dashcam raw footage 1080p
+WARNING: [youtube] YouTube said: ERROR - Precondition check failed.
+WARNING: [youtube] Unable to download API page: HTTP Error 400: Bad Request (caused by <HTTPError 400: Bad Request>)
+[youtube] X_yoLHwNSRU: Downloading android player API JSON
+WARNING: [youtube] tH6O1T0g41c: nsig extraction failed: You may experience throttling for some formats
+         n = Oo0v9znVMG9zoxc3 ; player = https://www.youtube.com/s/player/854a788e/player_es6.vflset/en_US/base.js
+[info] tH6O1T0g41c: Downloading 1 format(s): 18
+[info] tH6O1T0g41c: Downloading 1 time ranges: 30.0-120.0
+WARNING: [youtube] YouTube said: ERROR - Precondition check failed.
+WARNING: [youtube] HTTP Error 400: Bad Request. Retrying (1/3)...
+[youtube] X_yoLHwNSRU: Downloading android player API JSON
+[download] Destination: carla/carla_front.mp4
+WARNING: [youtube] YouTube said: ERROR - Precondition check failed.
+WARNING: [youtube] HTTP Error 400: Bad Request. Retrying (2/3)...
+[youtube] X_yoLHwNSRU: Downloading android player API JSON
+WARNING: [youtube] YouTube said: ERROR - Precondition check failed.
+WARNING: [youtube] HTTP Error 400: Bad Request. Retrying (3/3)...
+[youtube] X_yoLHwNSRU: Downloading android player API JSON
+[https @ 0x5f1510670c80] HTTP error 403 Forbidden
+[in#0 @ 0x5f151066fe40] Error opening input: Server returned 403 Forbidden (access denied)
+Error opening input file https://rr2---sn-cvh7knze.googlevideo.com/videoplayback?expire=1786196425&ei=ad12apOILtHKssUP8L6G0QY&ip=2404%3Af801%3A8028%3A7%3A125e%3Aa2c7%3A96e7%3A9470&id=o-ALraTqohokwYkXMLK2IeVjc9z9htNOYF_zARCRjeUD_r&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&cps=425&met=1786174825%2C&mh=LI&mm=31%2C29&mn=sn-cvh7knze%2Csn-ajcvh5-5c&ms=au%2Crdu&mv=m&mvi=2&pl=63&rms=au%2Cau&initcwndbps=3065000&bui=AZFlqhOIpr0BTjuGoXOmy8x5JRUF4_jFUZMSkmFfoGw3m8ynSQOLulxUZkvOJqk3y2s7BPEnZzKsqNBz&spc=KBGBcjH-A7W_ymavNjGWIg0XFR42NtmZsjkbMa6RzhVnYDEgegqOi7ptE0lQWLl-WWf9hWKjC0M&vprv=1&svpuc=1&mime=video%2Fmp4&ns=ijKdqpBzpndteOrxXiwW2j8X&rqh=1&cnr=14&ratebypass=yes&dur=31.370&lmt=1689318615424519&mt=1786174384&fvip=3&fexp=51565115%2C51973818&c=WEB&sefc=1&txp=6219224&n=Oo0v9znVMG9zoxc3&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Ccnr%2Cratebypass%2Cdur%2Clmt&sig=AE0s2JYwRgIhALgy5ya61x9Up78i-6XTrKdemK2d8Rfh_BIhCY5U4J7DAiEA2ZM2hewL3CCrk3JN--wHOA-VNur7kYI6CHpbB6XA7TE%3D&lsparams=cps%2Cmet%2Cmh%2Cmm%2Cmn%2Cms%2Cmv%2Cmvi%2Cpl%2Crms%2Cinitcwndbps&lsig=APaTxxMwRgIhANpEZ2EV8PnOvajTDyxXfWDtGQp4UJEQ4swrabKmy2ZAAiEAySiGvlWX3wxMUbouZ7EnW8Nv1nlInrKtErD2yul6baA%3D.
+Error opening input files: Server returned 403 Forbidden (access denied)
+
+
+ERROR: ffmpeg exited with code 8
+
+[download] Finished downloading playlist: CARLA simulator autopilot front camera driving town
+WARNING: [youtube] YouTube said: ERROR - Precondition check failed.
+WARNING: [youtube] Unable to download API page: HTTP Error 400: Bad Request (caused by <HTTPError 400: Bad Request>)
+WARNING: Only images are available for download. use --list-formats to see them
+ERROR: [youtube] X_yoLHwNSRU: Requested format is not available. Use --list-formats for a list of available formats
+[download] Finished downloading playlist: rear dash cam footage highway driving
++ ls -lh front/ rear/ carla/
+carla/:
+total 0
+
+front/:
+total 0
+
+rear/:
+total 0
