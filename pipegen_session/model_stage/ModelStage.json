@@ -1,0 +1,90 @@
+{
+  "version": 1,
+  "steps": {
+    "visualize": {
+      "step": "visualize",
+      "status": "ok",
+      "summary": "299 nodes \u00b7 every operator is one TensorRT can take",
+      "detail": "",
+      "data": {
+        "model_path": "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/src1/ONNX-YOLOv8-Object-Detection/models/yolov8m.onnx",
+        "nodes": 299,
+        "blocking": [],
+        "surgery_applied": false,
+        "exported_path": ""
+      },
+      "warnings": [],
+      "artifacts": {},
+      "recorded_at": 1786184557.581134
+    },
+    "compile": {
+      "step": "compile",
+      "status": "ok",
+      "summary": "FP16 engine reused from cache \u2014 199 TRT layers, 68.7 MB.",
+      "detail": "**yolov8m.onnx \u2192 yolov8m.fp16.plan** (TensorRT 10.8.0.43)\n\n| | |\n|---|---|\n| Precision | FP16 |\n| Build flags | `--fp16` |\n| Build time | served from cache |\n| Engine size | 68.7 MB |\n| TRT layers | 199 |\n| Reformat share | 27% |\n\n**Precision TensorRT actually chose**\n\n| Precision | Layers |\n|---|---:|\n| FP16 | 184 |\n| FP32 | 15 |\n\n**Layer types**\n\n| Type | Count |\n|---|---:|\n| CaskConvolution | 81 |\n| Reformat | 54 |\n| NoOp | 28 |\n| PointWiseV2 | 25 |\n| Constant | 3 |\n| CaskPooling | 3 |\n| Resize | 2 |\n| Shuffle | 2 |\n| CaskSoftMaxV2 | 1 |\n\nNothing has been measured yet \u2014 run the benchmark for speed, power and thermal.",
+      "data": {
+        "_data_file": "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/model_stage/compile.data.json"
+      },
+      "warnings": [],
+      "artifacts": {
+        "engine": "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/model_stage/yolov8m.fp16.plan"
+      },
+      "recorded_at": 1786184560.7538319
+    },
+    "engine": {
+      "step": "engine",
+      "status": "warning",
+      "summary": "FP16 engine: 3.945 ms/frame \u00b7 ~253 fps",
+      "detail": "**yolov8m.fp16.plan** (TensorRT 10.8.0.43, FP16)\n\n| Measurement | Value | Source |\n|---|---:|---|\n| Frame time (end to end) | 3.945 ms | trtexec |\n| GPU compute only | 3.518 ms | trtexec |\n| Host\u2194device transfer | 0.427 ms | derived |\n| Summed layer time | 3.508 ms | /home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/model_stage/yolov8m.fp16.runtime.profile.json |\n| Profiling overhead | 1.00\u00d7 | summed layers \u00f7 GPU compute |\n| Throughput | ~253 fps | derived |\n| Power | not measured | not_measured |\n\n**Precision TensorRT actually chose**\n\n| Precision | Layers |\n|---|---:|\n| FP16 | 184 |\n| FP32 | 15 |\n\n**Selected tactics**\n\n| Tactic | Count |\n|---|---:|\n| 0x00000000000003e8 | 54 |\n| 0x0000000000000000 | 33 |\n| 0x0000000000000009 | 22 |\n| 0xe29800439b9d3cf7 | 15 |\n| 0x30e8a8d7a953e5e9 | 12 |\n| 0xded5318b4a444b84 | 9 |\n| 0xf79479a62ea9f901 | 7 |\n| 0x1171249e97d91786 | 6 |\n| 0xafd1e8bf6bd3d638 | 5 |\n| 0x4a81ea1e51436a30 | 5 |\n| 0x92650053128339fe | 4 |\n| 0x457fb0a334d63ae2 | 2 |\n\nTactic/runtime/power values are separated by provenance; per-layer power is not claimed from whole-engine telemetry.\n\n---\n\n**yolov8m.onnx** on **Jetson Orin NX 16GB** (fp16, 15W)\n\n| Metric | Value |\n|---|---|\n| Latency / frame | 5.93 ms |\n| Throughput | ~169 fps |\n| Energy / frame | 62912.5 \u00b5J |\n| Peak power | 12.63 W |\n| Peak temperature rise | +18.94 \u00b0C |\n| Units profiled | 282 / 282 (100%) |\n\n**Time by family**\n\n| Family | ms | share |\n|---|---:|---:|\n| elementwise | 3.358 | 57% |\n| compute | 2.481 | 42% |\n| resize | 0.062 | 1% |\n| norm | 0.016 | 0% |\n| pool | 0.010 | 0% |\n\n**Hotspots**\n\n| Unit | Subgraph | Algorithm | ms | share | bound |\n|---|---|---|---:|---:|---|\n| `/model.0/act/Sigmoid` | pointwise | fused_pwn | 0.144 | 2.4% | memory-bound |\n| `/model.0/act/Mul` | pointwise | fused_pwn | 0.144 | 2.4% | memory-bound |\n| `/model.1/conv/Conv` | conv_bias_act | implicit_gemm | 0.109 | 1.8% | memory-bound |\n| `/model.2/cv2/conv/Conv` | pwconv_bias_act | implicit_gemm | 0.108 | 1.8% | memory-bound |\n| `/model.0/conv/Conv` | conv_bias_act | implicit_gemm | 0.090 | 1.5% | memory-bound |\n| `/model.22/cv3.0/cv3.0.0/conv/Conv` | conv_bias_act | winograd | 0.084 | 1.4% | compute-bound |\n| `/model.22/cv3.0/cv3.0.1/conv/Conv` | conv_bias_act | winograd | 0.084 | 1.4% | compute-bound |\n| `/model.4/cv2/conv/Conv` | pwconv_bias_act | implicit_gemm | 0.074 | 1.3% | memory-bound |\n\n_Modelled (roofline over the Orin NX fact table), not measured. Use it to compare options; use the layer report for ground truth._",
+      "data": {
+        "_data_file": "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/model_stage/engine.data.json"
+      },
+      "warnings": [
+        "'tegrastats' is not available on this system, so power and temperature were not measured; energy stays modelled. Run this step on the Jetson for ground truth."
+      ],
+      "artifacts": {
+        "engine": "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/model_stage/yolov8m.fp16.plan",
+        "tactics": "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/model_stage/engine_tactics.json"
+      },
+      "recorded_at": 1786184577.2427752
+    },
+    "accuracy": {
+      "step": "accuracy",
+      "status": "blocked",
+      "summary": "The metric produced no values for this data.",
+      "detail": "",
+      "data": {
+        "task": "detection",
+        "source": "pseudo",
+        "dataset_name": "HP True Vision FHD Camera: HP T (30 frames)",
+        "samples": 30,
+        "engine_path": "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/model_stage/yolov8m.fp16.plan",
+        "onnx_path": "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/src1/ONNX-YOLOv8-Object-Detection/models/yolov8m.onnx",
+        "precision": "fp16",
+        "primary_key": "mAP50",
+        "metrics": [],
+        "baseline": [],
+        "warnings": [
+          "The frames from HP True Vision FHD Camera: HP T are near-duplicates (closest pair differs by 0/64), so 30 samples carry about as much information as one. Use footage where the scene changes for a result worth acting on.",
+          "2 cameras are attached; HP True Vision FHD Camera: HP T (/dev/video0) was used. Pass a device to pick another: /dev/video2.",
+          "No input was given, so the engine and the ONNX were compared on live frames from the attached camera."
+        ],
+        "error": "The metric produced no values for this data.",
+        "headline": "Accuracy check failed: The metric produced no values for this data.",
+        "primary_value": null
+      },
+      "warnings": [
+        "The metric produced no values for this data.",
+        "The frames from HP True Vision FHD Camera: HP T are near-duplicates (closest pair differs by 0/64), so 30 samples carry about as much information as one. Use footage where the scene changes for a result worth acting on.",
+        "2 cameras are attached; HP True Vision FHD Camera: HP T (/dev/video0) was used. Pass a device to pick another: /dev/video2.",
+        "No input was given, so the engine and the ONNX were compared on live frames from the attached camera."
+      ],
+      "artifacts": {},
+      "recorded_at": 1786184601.2829432
+    }
+  },
+  "constraint": {},
+  "choices": {
+    "task": "detection"
+  }
+}

@@ -4,14 +4,13 @@ A lightweight L2 driver-assist prototype: **Forward Collision Warning** (front
 camera) and **Blind Spot Detection** (rear camera) from plain video, using
 TensorRT **FP16** perception generated with
 [CraftifAI PipeGen](https://developer.craftifai.com) and a small **C++**
-decision layer. Algorithm shapes and thresholds follow the ADAS_modular v3.3
-reference stack (read-only inspiration).
+decision layer.
 
 ## What it does
 
 - **FCW**: tracks the lead vehicle in the ego corridor, estimates range by
   fusing MiDaS relative depth with a bbox pinhole anchor, computes TTC from the
-  closing rate, and raises warn/critical banners on the v3.3 TTC ladder.
+  closing rate, and raises warn/critical banners on the TTC ladder.
 - **BSD**: watches trapezoidal blind-spot zones on the rear view; a vehicle
   that persists in a zone for N frames raises a left/right blind-spot warning.
 - Every demo frame carries live **FPS metrics** and detection overlays.
@@ -49,11 +48,9 @@ flowchart TB
 | Vehicle detection (front + rear) | YOLOv8 (ONNX) | `yolov8m.fp16.engine`, 55 MB | PipeGen benchmark catalog |
 | Monocular depth (front + rear) | MiDaS v2.1 small | `midas_small.fp16.engine`, 36 MB | PipeGen benchmark catalog |
 
-Compiled on an RTX 5060 Laptop (Blackwell, sm_120) with TensorRT 10.8 — see
-`docs/` for the container fix that makes Blackwell work with the stock
-DeepStream 7.1 image.
+Compiled on an RTX 5060 Laptop (Blackwell, sm_120) with TensorRT 10.8.
 
-## Decision layer (v3.3-derived parameters)
+## Decision layer
 
 | Function | Trigger | Thresholds |
 |---|---|---|
@@ -78,8 +75,14 @@ structure, the bbox pinhole supplies absolute scale.
 > per-object depth value, so a downstream module can compute FCW and BSD.
 > Any scene condition is possible including night and rain.
 
-(The conversational flow — source selection, PIR review, FP16 compilation and
-benchmark/accuracy reports — is captured in `docs/screenshots/`.)
+PipeGen compiling the models to **FP16 TensorRT** engines:
+
+![PipeGen FP16 model compilation](assets/pipegen_fp16_pipeline.png)
+
+The full PipeGen session — requirement conversation, repo/source selection,
+PIR, and the FP16 model-compilation reports — is included verbatim in
+[`pipegen_session/`](pipegen_session/): `RequirementState.json`, `PipelineIR.json`,
+`RepoGate.json`, `state.json`, and the per-model reports under `model_stage/`.
 
 ## What was built on top of PipeGen
 
@@ -98,39 +101,35 @@ All demo videos are saved in the [`demos/`](demos/) directory:
 | File | Shows |
 |---|---|
 | [`demos/live_sidebyside.mp4`](demos/live_sidebyside.mp4) | **front FCW and rear BSD side by side** — the main demo |
-| [`demos/screen_recording.mp4`](demos/screen_recording.mp4) | terminal launching the pipeline and playing the result |
 | [`demos/demo_front_fcw.mp4`](demos/demo_front_fcw.mp4) | FCW on dashcam front view — lead tracking + TTC + range |
 | [`demos/demo_rear_bsd.mp4`](demos/demo_rear_bsd.mp4) | BSD blind-spot zones on rear view |
-| [`demos/demo_carla_fcw.mp4`](demos/demo_carla_fcw.mp4) | same pipeline, unchanged, on CARLA simulator footage |
 
 Reproduce the side-by-side demo with one command:
 
 ```bash
-./run_demo.sh                       # uses the bundled front/rear clips
+./run_demo.sh                            # uses the bundled front/rear clips
 ./run_demo.sh my_front.mp4 my_rear.mp4   # or your own
 ```
 
-## CARLA
-
-The pipelines are camera-agnostic: `demos/demo_carla_fcw.mp4` is CARLA
-simulator footage passed through the identical engines + decision layer.
-CARLA 0.9.15 is installed under `~/carla` for live-bridge work: a
-`sensor.camera.rgb` callback feeding frames into the same pipeline input is
-the documented next step in `sim/`.
-
 ## Build & run
 
+All paths below are relative to the repo root. `run_demo.sh` does all of this
+for you; the manual steps are:
+
 ```bash
-# 1. FP16 engines (inside the PipeGen DeepStream container)
-trtexec --onnx=models/yolov8m.onnx --fp16 --saveEngine=pipelines/engines/yolov8m.fp16.engine
-trtexec --onnx=models/midas_v21_small.onnx --fp16 --saveEngine=pipelines/engines/midas_small.fp16.engine
+# 0. build the C++ decision layer (once)
+cmake -S adas -B adas/build && cmake --build adas/build
 
-# 2. perception (container): annotated video + JSON
-python3 pipelines/perception.py front.mov out/front_annotated.mp4 out/results_front.json \
-        pipelines/engines/yolov8m.fp16.engine pipelines/engines/midas_small.fp16.engine
+# 1. perception — runs PipeGen's FP16 engines (YOLOv8 + MiDaS) in the container,
+#    writing an annotated video + per-frame JSON. Run from the repo root.
+docker exec craftifai-amd64-v3 bash -c 'cd '"$PWD"'/pipelines && \
+  python3 perception.py ~/personal/pipegen/front.mov out_pipegen/results_front.mp4 \
+    out_pipegen/results_front.json \
+    engines_pipegen/yolov8m.fp16.engine engines_pipegen/midas_small.fp16.engine'
 
-# 3. decision layer + demo render (host)
-cd adas && mkdir -p build && cd build && cmake .. && make
-./adas_fusion --mode front --video front.mov --json out/results_front.json --out demos/demo_front_fcw.mp4
-./adas_fusion --mode rear  --video rear.mov  --json out/results_rear.json  --out demos/demo_rear_bsd.mp4
+# 2. decision layer + demo render (host)
+./adas/build/adas_fusion --mode front --video ~/personal/pipegen/front.mov \
+    --json pipelines/out_pipegen/results_front.json --out demos/demo_front_fcw.mp4
+./adas/build/adas_fusion --mode rear  --video ~/personal/pipegen/rear.mov \
+    --json pipelines/out_pipegen/results_rear.json  --out demos/demo_rear_bsd.mp4
 ```

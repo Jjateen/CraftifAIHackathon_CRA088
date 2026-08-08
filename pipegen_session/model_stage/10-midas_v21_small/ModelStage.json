@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "steps": {
+    "visualize": {
+      "step": "visualize",
+      "status": "ok",
+      "summary": "275 nodes \u00b7 every operator is one TensorRT can take",
+      "detail": "",
+      "data": {
+        "model_path": "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/src2/ONNX-MiDaS-Depth-Estimation/models/midas_v21_small.onnx",
+        "nodes": 275,
+        "blocking": [],
+        "surgery_applied": false,
+        "exported_path": ""
+      },
+      "warnings": [],
+      "artifacts": {},
+      "recorded_at": 1786184759.3884263
+    },
+    "compile": {
+      "step": "compile",
+      "status": "warning",
+      "summary": "FP16 engine built in 3.8s \u2014 138 TRT layers, 45.2 MB.",
+      "detail": "**midas_v21_small.onnx \u2192 midas_v21_small.fp16.plan** (TensorRT 10.8.0.43)\n\n| | |\n|---|---|\n| Precision | FP16 |\n| Build flags | `--fp16` |\n| Build time | 3.8 s |\n| Engine size | 45.2 MB |\n| TRT layers | 138 |\n| Reformat share | 1% |\n\n**Precision TensorRT actually chose**\n\n| Precision | Layers |\n|---|---:|\n| FP16 | 133 |\n| FP32 | 5 |\n\n**Layer types**\n\n| Type | Count |\n|---|---:|\n| CaskConvolution | 97 |\n| NoOp | 24 |\n| PointWiseV2 | 8 |\n| Resize | 5 |\n| Constant | 2 |\n| Reformat | 2 |\n\nNothing has been measured yet \u2014 run the benchmark for speed, power and thermal.",
+      "data": {
+        "_data_file": "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/model_stage/10-midas_v21_small/compile.data.json"
+      },
+      "warnings": [
+        "First build on this GPU, so every kernel had to be timed (4s). The timings are now cached; rebuilding this model after surgery or quantization will be far quicker."
+      ],
+      "artifacts": {
+        "engine": "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/model_stage/10-midas_v21_small/midas_v21_small.fp16.plan"
+      },
+      "recorded_at": 1786184771.227642
+    }
+  },
+  "constraint": {},
+  "choices": {}
+}

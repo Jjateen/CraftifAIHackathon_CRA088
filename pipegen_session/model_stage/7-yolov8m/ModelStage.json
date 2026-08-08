@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "steps": {
+    "visualize": {
+      "step": "visualize",
+      "status": "ok",
+      "summary": "299 nodes \u00b7 every operator is one TensorRT can take",
+      "detail": "",
+      "data": {
+        "model_path": "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/src1/ONNX-YOLOv8-Object-Detection/models/yolov8m.onnx",
+        "nodes": 299,
+        "blocking": [],
+        "surgery_applied": false,
+        "exported_path": ""
+      },
+      "warnings": [],
+      "artifacts": {},
+      "recorded_at": 1786184610.9449608
+    },
+    "compile": {
+      "step": "compile",
+      "status": "blocked",
+      "summary": "Engine build cancelled \u2014 the partial .plan was deleted.",
+      "detail": "",
+      "data": {},
+      "warnings": [
+        "Engine build cancelled \u2014 the partial .plan was deleted."
+      ],
+      "artifacts": {},
+      "recorded_at": 1786184639.7272956
+    }
+  },
+  "constraint": {},
+  "choices": {}
+}

@@ -1,0 +1,916 @@
+{
+    "pipeline_ir": {
+        "nodes": [
+            {
+                "id": 1,
+                "type": "input",
+                "ports": [
+                    {
+                        "id": "p1_out",
+                        "direction": "output",
+                        "tensor": {
+                            "dtype": "uint8",
+                            "shape": null
+                        },
+                        "format": {
+                            "color": "BGR",
+                            "encoding": "raw"
+                        },
+                        "framerate": null
+                    }
+                ],
+                "name": "file",
+                "url": "file:///home/jjateen/personal/pipegen/front.mov",
+                "resolution": null,
+                "description": "Read front video file frames as BGR",
+                "pseudo_code": "import cv2\n\ndef input_stream(video_path):\n    cap = cv2.VideoCapture(video_path)\n    while True:\n        ret, frame = cap.read()\n        if not ret:\n            break\n        yield frame\n    cap.release()\n"
+            },
+            {
+                "id": 2,
+                "type": "input",
+                "ports": [
+                    {
+                        "id": "p2_out",
+                        "direction": "output",
+                        "tensor": {
+                            "dtype": "uint8",
+                            "shape": null
+                        },
+                        "format": {
+                            "color": "BGR",
+                            "encoding": "raw"
+                        },
+                        "framerate": null
+                    }
+                ],
+                "name": "file",
+                "url": "file:///home/jjateen/personal/pipegen/rear.mov",
+                "resolution": null,
+                "description": "Read rear video file frames as BGR",
+                "pseudo_code": "import cv2\n\ndef input_stream(video_path):\n    cap = cv2.VideoCapture(video_path)\n    while True:\n        ret, frame = cap.read()\n        if not ret:\n            break\n        yield frame\n    cap.release()\n"
+            },
+            {
+                "id": 3,
+                "type": "preprocess",
+                "ports": [
+                    {
+                        "id": "p3_in",
+                        "direction": "input",
+                        "tensor": {
+                            "dtype": "uint8",
+                            "shape": null
+                        },
+                        "format": {
+                            "color": "BGR",
+                            "encoding": "raw"
+                        },
+                        "framerate": null
+                    },
+                    {
+                        "id": "p3_out",
+                        "direction": "output",
+                        "tensor": {
+                            "dtype": "fp32",
+                            "shape": [
+                                1,
+                                3,
+                                480,
+                                640
+                            ]
+                        },
+                        "format": {
+                            "color": "RGB",
+                            "encoding": "raw"
+                        },
+                        "framerate": null
+                    }
+                ],
+                "resize": [
+                    640,
+                    480
+                ],
+                "normalization": null,
+                "offset": null,
+                "mean": null,
+                "std": null,
+                "color_order": "RGB",
+                "scale": 0.00392156862745098,
+                "description": "BGR->RGB resize, scale 1/255, NCHW",
+                "pseudo_code": "import cv2\nimport numpy as np\n\ndef prepare_input(image, input_width, input_height):\n    img_height, img_width = image.shape[:2]\n\n    input_img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)\n    input_img = cv2.resize(input_img, (input_width, input_height))\n    input_img = input_img / 255.0\n    input_img = input_img.transpose(2, 0, 1)\n    input_tensor = input_img[np.newaxis, :, :, :].astype(np.float32)\n\n    return input_tensor, (img_width, img_height)\n"
+            },
+            {
+                "id": 4,
+                "type": "inference",
+                "ports": [
+                    {
+                        "id": "p4_in",
+                        "direction": "input",
+                        "tensor": {
+                            "dtype": "fp32",
+                            "shape": [
+                                1,
+                                3,
+                                480,
+                                640
+                            ]
+                        },
+                        "format": {
+                            "color": "RGB",
+                            "encoding": "raw"
+                        },
+                        "framerate": null
+                    },
+                    {
+                        "id": "p4_out",
+                        "direction": "output",
+                        "tensor": {
+                            "dtype": "fp32",
+                            "shape": [
+                                1,
+                                84,
+                                6300
+                            ]
+                        },
+                        "format": {
+                            "color": null,
+                            "encoding": "raw"
+                        },
+                        "framerate": null
+                    }
+                ],
+                "layout": "NCHW",
+                "model": {
+                    "type": "onnx",
+                    "url": "file:///home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/src1/ONNX-YOLOv8-Object-Detection/models/yolov8m.onnx",
+                    "name": "yolov8m",
+                    "inputs": [
+                        {
+                            "name": "images",
+                            "shape": [
+                                1,
+                                3,
+                                480,
+                                640
+                            ],
+                            "dtype": "float32"
+                        }
+                    ],
+                    "outputs": [
+                        {
+                            "name": "output0",
+                            "shape": [
+                                1,
+                                84,
+                                6300
+                            ],
+                            "dtype": "float32"
+                        }
+                    ]
+                },
+                "batchSize": 1,
+                "description": "Run YOLOv8m ONNX with ONNX Runtime",
+                "pseudo_code": "import time\nimport onnxruntime\n\ndef initialize_session(path):\n    session = onnxruntime.InferenceSession(path, providers=onnxruntime.get_available_providers())\n    input_name = session.get_inputs()[0].name\n    output_names = [o.name for o in session.get_outputs()]\n    return session, input_name, output_names\n\ndef inference(session, input_name, output_names, input_tensor):\n    start = time.perf_counter()\n    outputs = session.run(output_names, {input_name: input_tensor})\n    return outputs\n"
+            },
+            {
+                "id": 5,
+                "type": "postprocess",
+                "ports": [
+                    {
+                        "id": "p5_in",
+                        "direction": "input",
+                        "tensor": {
+                            "dtype": "fp32",
+                            "shape": [
+                                1,
+                                84,
+                                6300
+                            ]
+                        },
+                        "format": {
+                            "color": null,
+                            "encoding": "raw"
+                        },
+                        "framerate": null
+                    },
+                    {
+                        "id": "p5_out",
+                        "direction": "output",
+                        "tensor": {
+                            "dtype": "fp32",
+                            "shape": null
+                        },
+                        "format": {
+                            "color": null,
+                            "encoding": "raw"
+                        },
+                        "framerate": null
+                    }
+                ],
+                "task": "detection",
+                "threshold": 0,
+                "num_classes": 80,
+                "top_items": null,
+                "label_file_path": null,
+                "description": "Decode YOLOv8 output, conf filter, multiclass NMS",
+                "pseudo_code": "import numpy as np\n\n# inlined from yolov8/utils.py\n\ndef compute_iou(box, boxes):\n    xmin = np.maximum(box[0], boxes[:, 0])\n    ymin = np.maximum(box[1], boxes[:, 1])\n    xmax = np.minimum(box[2], boxes[:, 2])\n    ymax = np.minimum(box[3], boxes[:, 3])\n\n    intersection_area = np.maximum(0, xmax - xmin) * np.maximum(0, ymax - ymin)\n\n    box_area = (box[2] - box[0]) * (box[3] - box[1])\n    boxes_area = (boxes[:, 2] - boxes[:, 0]) * (boxes[:, 3] - boxes[:, 1])\n    union_area = box_area + boxes_area - intersection_area\n\n    iou = intersection_area / union_area\n    return iou\n\n\ndef nms(boxes, scores, iou_threshold):\n    sorted_indices = np.argsort(scores)[::-1]\n\n    keep_boxes = []\n    while sorted_indices.size > 0:\n        box_id = sorted_indices[0]\n        keep_boxes.append(box_id)\n\n        ious = compute_iou(boxes[box_id, :], boxes[sorted_indices[1:], :])\n        keep_indices = np.where(ious < iou_threshold)[0]\n        sorted_indices = sorted_indices[keep_indices + 1]\n\n    return keep_boxes\n\n\ndef multiclass_nms(boxes, scores, class_ids, iou_threshold):\n    unique_class_ids = np.unique(class_ids)\n\n    keep_boxes = []\n    for class_id in unique_class_ids:\n        class_indices = np.where(class_ids == class_id)[0]\n        class_boxes = boxes[class_indices, :]\n        class_scores = scores[class_indices]\n\n        class_keep_boxes = nms(class_boxes, class_scores, iou_threshold)\n        keep_boxes.extend(class_indices[class_keep_boxes])\n\n    return keep_boxes\n\n\ndef xywh2xyxy(x):\n    y = np.copy(x)\n    y[..., 0] = x[..., 0] - x[..., 2] / 2\n    y[..., 1] = x[..., 1] - x[..., 3] / 2\n    y[..., 2] = x[..., 0] + x[..., 2] / 2\n    y[..., 3] = x[..., 1] + x[..., 3] / 2\n    return y\n\n\n# repo postprocess (from yolov8/YOLOv8.py)\n\ndef process_output(output, img_width, img_height, input_width, input_height, conf_threshold=0.7, iou_threshold=0.5):\n    predictions = np.squeeze(output[0]).T\n\n    scores = np.max(predictions[:, 4:], axis=1)\n    predictions = predictions[scores > conf_threshold, :]\n    scores = scores[scores > conf_threshold]\n\n    if len(scores) == 0:\n        return [], [], []\n\n    class_ids = np.argmax(predictions[:, 4:], axis=1)\n\n    boxes = predictions[:, :4]\n    input_shape = np.array([input_width, input_height, input_width, input_height])\n    boxes = np.divide(boxes, input_shape, dtype=np.float32)\n    boxes *= np.array([img_width, img_height, img_width, img_height])\n    boxes = xywh2xyxy(boxes)\n\n    indices = multiclass_nms(boxes, scores, class_ids, iou_threshold)\n\n    return boxes[indices], scores[indices], class_ids[indices]\n"
+            },
+            {
+                "id": 6,
+                "type": "preprocess",
+                "ports": [
+                    {
+                        "id": "p6_in",
+                        "direction": "input",
+                        "tensor": {
+                            "dtype": "uint8",
+                            "shape": null
+                        },
+                        "format": {
+                            "color": "BGR",
+                            "encoding": "raw"
+                        },
+                        "framerate": null
+                    },
+                    {
+                        "id": "p6_out",
+                        "direction": "output",
+                        "tensor": {
+                            "dtype": "fp32",
+                            "shape": [
+                                1,
+                                3,
+                                480,
+                                640
+                            ]
+                        },
+                        "format": {
+                            "color": "RGB",
+                            "encoding": "raw"
+                        },
+                        "framerate": null
+                    }
+                ],
+                "resize": [
+                    640,
+                    480
+                ],
+                "normalization": null,
+                "offset": null,
+                "mean": null,
+                "std": null,
+                "color_order": "RGB",
+                "scale": 0.00392156862745098,
+                "description": "BGR->RGB resize, scale 1/255, NCHW",
+                "pseudo_code": "import cv2\nimport numpy as np\n\ndef prepare_input(image, input_width, input_height):\n    img_height, img_width = image.shape[:2]\n\n    input_img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)\n    input_img = cv2.resize(input_img, (input_width, input_height))\n    input_img = input_img / 255.0\n    input_img = input_img.transpose(2, 0, 1)\n    input_tensor = input_img[np.newaxis, :, :, :].astype(np.float32)\n\n    return input_tensor, (img_width, img_height)\n"
+            },
+            {
+                "id": 7,
+                "type": "inference",
+                "ports": [
+                    {
+                        "id": "p7_in",
+                        "direction": "input",
+                        "tensor": {
+                            "dtype": "fp32",
+                            "shape": [
+                                1,
+                                3,
+                                480,
+                                640
+                            ]
+                        },
+                        "format": {
+                            "color": "RGB",
+                            "encoding": "raw"
+                        },
+                        "framerate": null
+                    },
+                    {
+                        "id": "p7_out",
+                        "direction": "output",
+                        "tensor": {
+                            "dtype": "fp32",
+                            "shape": [
+                                1,
+                                84,
+                                6300
+                            ]
+                        },
+                        "format": {
+                            "color": null,
+                            "encoding": "raw"
+                        },
+                        "framerate": null
+                    }
+                ],
+                "layout": "NCHW",
+                "model": {
+                    "type": "onnx",
+                    "url": "file:///home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/src1/ONNX-YOLOv8-Object-Detection/models/yolov8m.onnx",
+                    "name": "yolov8m",
+                    "inputs": [
+                        {
+                            "name": "images",
+                            "shape": [
+                                1,
+                                3,
+                                480,
+                                640
+                            ],
+                            "dtype": "float32"
+                        }
+                    ],
+                    "outputs": [
+                        {
+                            "name": "output0",
+                            "shape": [
+                                1,
+                                84,
+                                6300
+                            ],
+                            "dtype": "float32"
+                        }
+                    ]
+                },
+                "batchSize": 1,
+                "description": "Run YOLOv8m ONNX with ONNX Runtime",
+                "pseudo_code": "import time\nimport onnxruntime\n\ndef initialize_session(path):\n    session = onnxruntime.InferenceSession(path, providers=onnxruntime.get_available_providers())\n    input_name = session.get_inputs()[0].name\n    output_names = [o.name for o in session.get_outputs()]\n    return session, input_name, output_names\n\ndef inference(session, input_name, output_names, input_tensor):\n    start = time.perf_counter()\n    outputs = session.run(output_names, {input_name: input_tensor})\n    return outputs\n"
+            },
+            {
+                "id": 8,
+                "type": "postprocess",
+                "ports": [
+                    {
+                        "id": "p8_in",
+                        "direction": "input",
+                        "tensor": {
+                            "dtype": "fp32",
+                            "shape": [
+                                1,
+                                84,
+                                6300
+                            ]
+                        },
+                        "format": {
+                            "color": null,
+                            "encoding": "raw"
+                        },
+                        "framerate": null
+                    },
+                    {
+                        "id": "p8_out",
+                        "direction": "output",
+                        "tensor": {
+                            "dtype": "fp32",
+                            "shape": null
+                        },
+                        "format": {
+                            "color": null,
+                            "encoding": "raw"
+                        },
+                        "framerate": null
+                    }
+                ],
+                "task": "detection",
+                "threshold": 0,
+                "num_classes": 80,
+                "top_items": null,
+                "label_file_path": null,
+                "description": "Decode YOLOv8 output, conf filter, multiclass NMS",
+                "pseudo_code": "import numpy as np\n\n# inlined from yolov8/utils.py\n\ndef compute_iou(box, boxes):\n    xmin = np.maximum(box[0], boxes[:, 0])\n    ymin = np.maximum(box[1], boxes[:, 1])\n    xmax = np.minimum(box[2], boxes[:, 2])\n    ymax = np.minimum(box[3], boxes[:, 3])\n\n    intersection_area = np.maximum(0, xmax - xmin) * np.maximum(0, ymax - ymin)\n\n    box_area = (box[2] - box[0]) * (box[3] - box[1])\n    boxes_area = (boxes[:, 2] - boxes[:, 0]) * (boxes[:, 3] - boxes[:, 1])\n    union_area = box_area + boxes_area - intersection_area\n\n    iou = intersection_area / union_area\n    return iou\n\n\ndef nms(boxes, scores, iou_threshold):\n    sorted_indices = np.argsort(scores)[::-1]\n\n    keep_boxes = []\n    while sorted_indices.size > 0:\n        box_id = sorted_indices[0]\n        keep_boxes.append(box_id)\n\n        ious = compute_iou(boxes[box_id, :], boxes[sorted_indices[1:], :])\n        keep_indices = np.where(ious < iou_threshold)[0]\n        sorted_indices = sorted_indices[keep_indices + 1]\n\n    return keep_boxes\n\n\ndef multiclass_nms(boxes, scores, class_ids, iou_threshold):\n    unique_class_ids = np.unique(class_ids)\n\n    keep_boxes = []\n    for class_id in unique_class_ids:\n        class_indices = np.where(class_ids == class_id)[0]\n        class_boxes = boxes[class_indices, :]\n        class_scores = scores[class_indices]\n\n        class_keep_boxes = nms(class_boxes, class_scores, iou_threshold)\n        keep_boxes.extend(class_indices[class_keep_boxes])\n\n    return keep_boxes\n\n\ndef xywh2xyxy(x):\n    y = np.copy(x)\n    y[..., 0] = x[..., 0] - x[..., 2] / 2\n    y[..., 1] = x[..., 1] - x[..., 3] / 2\n    y[..., 2] = x[..., 0] + x[..., 2] / 2\n    y[..., 3] = x[..., 1] + x[..., 3] / 2\n    return y\n\n\n# repo postprocess (from yolov8/YOLOv8.py)\n\ndef process_output(output, img_width, img_height, input_width, input_height, conf_threshold=0.7, iou_threshold=0.5):\n    predictions = np.squeeze(output[0]).T\n\n    scores = np.max(predictions[:, 4:], axis=1)\n    predictions = predictions[scores > conf_threshold, :]\n    scores = scores[scores > conf_threshold]\n\n    if len(scores) == 0:\n        return [], [], []\n\n    class_ids = np.argmax(predictions[:, 4:], axis=1)\n\n    boxes = predictions[:, :4]\n    input_shape = np.array([input_width, input_height, input_width, input_height])\n    boxes = np.divide(boxes, input_shape, dtype=np.float32)\n    boxes *= np.array([img_width, img_height, img_width, img_height])\n    boxes = xywh2xyxy(boxes)\n\n    indices = multiclass_nms(boxes, scores, class_ids, iou_threshold)\n\n    return boxes[indices], scores[indices], class_ids[indices]\n"
+            },
+            {
+                "id": 9,
+                "type": "preprocess",
+                "ports": [
+                    {
+                        "id": "p9_in",
+                        "direction": "input",
+                        "tensor": {
+                            "dtype": "uint8",
+                            "shape": null
+                        },
+                        "format": {
+                            "color": "BGR",
+                            "encoding": "raw"
+                        },
+                        "framerate": null
+                    },
+                    {
+                        "id": "p9_out",
+                        "direction": "output",
+                        "tensor": {
+                            "dtype": "fp32",
+                            "shape": [
+                                1,
+                                3,
+                                256,
+                                256
+                            ]
+                        },
+                        "format": {
+                            "color": "RGB",
+                            "encoding": "raw"
+                        },
+                        "framerate": null
+                    }
+                ],
+                "resize": [
+                    256,
+                    256
+                ],
+                "normalization": null,
+                "offset": null,
+                "mean": [
+                    0.485,
+                    0.456,
+                    0.406
+                ],
+                "std": [
+                    0.229,
+                    0.224,
+                    0.225
+                ],
+                "color_order": "RGB",
+                "scale": 0.00392156862745098,
+                "description": "BGR->RGB resize, imagenet normalize, NCHW",
+                "pseudo_code": "import cv2\nimport numpy as np\n\ndef midas_preprocess(image, input_size=256):\n    original_size = (image.shape[1], image.shape[0])\n    img_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)\n    img_resized = cv2.resize(img_rgb, (input_size, input_size))\n    mean = np.array([0.485, 0.456, 0.406]).reshape(1, 1, 3)\n    std = np.array([0.229, 0.224, 0.225]).reshape(1, 1, 3)\n    img_normalized = (img_resized.astype(np.float32) / 255.0 - mean) / std\n    input_tensor = img_normalized.transpose(2, 0, 1)[np.newaxis, ...].astype(np.float32)\n    return input_tensor, original_size\n"
+            },
+            {
+                "id": 10,
+                "type": "inference",
+                "ports": [
+                    {
+                        "id": "p10_in",
+                        "direction": "input",
+                        "tensor": {
+                            "dtype": "fp32",
+                            "shape": [
+                                1,
+                                3,
+                                256,
+                                256
+                            ]
+                        },
+                        "format": {
+                            "color": "RGB",
+                            "encoding": "raw"
+                        },
+                        "framerate": null
+                    },
+                    {
+                        "id": "p10_out",
+                        "direction": "output",
+                        "tensor": {
+                            "dtype": "fp32",
+                            "shape": [
+                                1,
+                                256,
+                                256
+                            ]
+                        },
+                        "format": {
+                            "color": null,
+                            "encoding": "raw"
+                        },
+                        "framerate": null
+                    }
+                ],
+                "layout": "NCHW",
+                "model": {
+                    "type": "onnx",
+                    "url": "file:///home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/src2/ONNX-MiDaS-Depth-Estimation/models/midas_v21_small.onnx",
+                    "name": "midas_v21_small",
+                    "inputs": [
+                        {
+                            "name": "0",
+                            "shape": [
+                                1,
+                                3,
+                                256,
+                                256
+                            ],
+                            "dtype": "fp32"
+                        }
+                    ],
+                    "outputs": [
+                        {
+                            "name": "797",
+                            "shape": [
+                                1,
+                                256,
+                                256
+                            ],
+                            "dtype": "fp32"
+                        }
+                    ]
+                },
+                "batchSize": 1,
+                "description": "Run MiDaS small ONNX with ONNX Runtime",
+                "pseudo_code": "import onnxruntime as ort\n\ndef midas_infer(session, input_name, output_name, input_tensor):\n    outputs = session.run([output_name], {input_name: input_tensor})\n    return outputs[0]\n"
+            },
+            {
+                "id": 11,
+                "type": "postprocess",
+                "ports": [
+                    {
+                        "id": "p11_in",
+                        "direction": "input",
+                        "tensor": {
+                            "dtype": "fp32",
+                            "shape": [
+                                1,
+                                256,
+                                256
+                            ]
+                        },
+                        "format": {
+                            "color": null,
+                            "encoding": "raw"
+                        },
+                        "framerate": null
+                    },
+                    {
+                        "id": "p11_out",
+                        "direction": "output",
+                        "tensor": {
+                            "dtype": "uint8",
+                            "shape": null
+                        },
+                        "format": {
+                            "color": "GRAY",
+                            "encoding": "raw"
+                        },
+                        "framerate": null
+                    }
+                ],
+                "task": "custom",
+                "threshold": null,
+                "num_classes": null,
+                "top_items": null,
+                "label_file_path": null,
+                "description": "Resize depth to frame, min-max to uint8",
+                "pseudo_code": "import cv2\nimport numpy as np\n\ndef midas_postprocess(depth_output, original_size):\n    depth = depth_output.squeeze()\n    depth_resized = cv2.resize(depth, original_size)\n    depth_min = depth_resized.min()\n    depth_max = depth_resized.max()\n    depth_normalized = (depth_resized - depth_min) / (depth_max - depth_min + 1e-8)\n    depth_normalized = (depth_normalized * 255).astype(np.uint8)\n    return depth_normalized\n"
+            },
+            {
+                "id": 12,
+                "type": "preprocess",
+                "ports": [
+                    {
+                        "id": "p12_in",
+                        "direction": "input",
+                        "tensor": {
+                            "dtype": "uint8",
+                            "shape": null
+                        },
+                        "format": {
+                            "color": "BGR",
+                            "encoding": "raw"
+                        },
+                        "framerate": null
+                    },
+                    {
+                        "id": "p12_out",
+                        "direction": "output",
+                        "tensor": {
+                            "dtype": "fp32",
+                            "shape": [
+                                1,
+                                3,
+                                256,
+                                256
+                            ]
+                        },
+                        "format": {
+                            "color": "RGB",
+                            "encoding": "raw"
+                        },
+                        "framerate": null
+                    }
+                ],
+                "resize": [
+                    256,
+                    256
+                ],
+                "normalization": null,
+                "offset": null,
+                "mean": [
+                    0.485,
+                    0.456,
+                    0.406
+                ],
+                "std": [
+                    0.229,
+                    0.224,
+                    0.225
+                ],
+                "color_order": "RGB",
+                "scale": 0.00392156862745098,
+                "description": "BGR->RGB resize, imagenet normalize, NCHW",
+                "pseudo_code": "import cv2\nimport numpy as np\n\ndef midas_preprocess(image, input_size=256):\n    original_size = (image.shape[1], image.shape[0])\n    img_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)\n    img_resized = cv2.resize(img_rgb, (input_size, input_size))\n    mean = np.array([0.485, 0.456, 0.406]).reshape(1, 1, 3)\n    std = np.array([0.229, 0.224, 0.225]).reshape(1, 1, 3)\n    img_normalized = (img_resized.astype(np.float32) / 255.0 - mean) / std\n    input_tensor = img_normalized.transpose(2, 0, 1)[np.newaxis, ...].astype(np.float32)\n    return input_tensor, original_size\n"
+            },
+            {
+                "id": 13,
+                "type": "inference",
+                "ports": [
+                    {
+                        "id": "p13_in",
+                        "direction": "input",
+                        "tensor": {
+                            "dtype": "fp32",
+                            "shape": [
+                                1,
+                                3,
+                                256,
+                                256
+                            ]
+                        },
+                        "format": {
+                            "color": "RGB",
+                            "encoding": "raw"
+                        },
+                        "framerate": null
+                    },
+                    {
+                        "id": "p13_out",
+                        "direction": "output",
+                        "tensor": {
+                            "dtype": "fp32",
+                            "shape": [
+                                1,
+                                256,
+                                256
+                            ]
+                        },
+                        "format": {
+                            "color": null,
+                            "encoding": "raw"
+                        },
+                        "framerate": null
+                    }
+                ],
+                "layout": "NCHW",
+                "model": {
+                    "type": "onnx",
+                    "url": "file:///home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/src2/ONNX-MiDaS-Depth-Estimation/models/midas_v21_small.onnx",
+                    "name": "midas_v21_small",
+                    "inputs": [
+                        {
+                            "name": "0",
+                            "shape": [
+                                1,
+                                3,
+                                256,
+                                256
+                            ],
+                            "dtype": "fp32"
+                        }
+                    ],
+                    "outputs": [
+                        {
+                            "name": "797",
+                            "shape": [
+                                1,
+                                256,
+                                256
+                            ],
+                            "dtype": "fp32"
+                        }
+                    ]
+                },
+                "batchSize": 1,
+                "description": "Run MiDaS small ONNX with ONNX Runtime",
+                "pseudo_code": "import onnxruntime as ort\n\ndef midas_infer(session, input_name, output_name, input_tensor):\n    outputs = session.run([output_name], {input_name: input_tensor})\n    return outputs[0]\n"
+            },
+            {
+                "id": 14,
+                "type": "postprocess",
+                "ports": [
+                    {
+                        "id": "p14_in",
+                        "direction": "input",
+                        "tensor": {
+                            "dtype": "fp32",
+                            "shape": [
+                                1,
+                                256,
+                                256
+                            ]
+                        },
+                        "format": {
+                            "color": null,
+                            "encoding": "raw"
+                        },
+                        "framerate": null
+                    },
+                    {
+                        "id": "p14_out",
+                        "direction": "output",
+                        "tensor": {
+                            "dtype": "uint8",
+                            "shape": null
+                        },
+                        "format": {
+                            "color": "GRAY",
+                            "encoding": "raw"
+                        },
+                        "framerate": null
+                    }
+                ],
+                "task": "custom",
+                "threshold": null,
+                "num_classes": null,
+                "top_items": null,
+                "label_file_path": null,
+                "description": "Resize depth to frame, min-max to uint8",
+                "pseudo_code": "import cv2\nimport numpy as np\n\ndef midas_postprocess(depth_output, original_size):\n    depth = depth_output.squeeze()\n    depth_resized = cv2.resize(depth, original_size)\n    depth_min = depth_resized.min()\n    depth_max = depth_resized.max()\n    depth_normalized = (depth_resized - depth_min) / (depth_max - depth_min + 1e-8)\n    depth_normalized = (depth_normalized * 255).astype(np.uint8)\n    return depth_normalized\n"
+            },
+            {
+                "id": 15,
+                "type": "output",
+                "ports": [
+                    {
+                        "id": "p15_in_det_front",
+                        "direction": "input",
+                        "tensor": {
+                            "dtype": "fp32",
+                            "shape": null
+                        },
+                        "format": {
+                            "color": null,
+                            "encoding": "raw"
+                        },
+                        "framerate": null
+                    },
+                    {
+                        "id": "p15_in_det_rear",
+                        "direction": "input",
+                        "tensor": {
+                            "dtype": "fp32",
+                            "shape": null
+                        },
+                        "format": {
+                            "color": null,
+                            "encoding": "raw"
+                        },
+                        "framerate": null
+                    }
+                ],
+                "name": "json",
+                "url": "file:///home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/out/detections.json",
+                "json": {
+                    "source": "dual_camera_vehicle_detection_yolov8m",
+                    "min_conf": 0.2
+                },
+                "resolution": null,
+                "output_type": "single",
+                "grid": null,
+                "description": "Write per-frame detections metadata to JSON",
+                "pseudo_code": "import json\n\ndef write_json(all_stream_results, out_path):\n    with open(out_path, 'w') as f:\n        json.dump(all_stream_results, f, indent=2)\n"
+            },
+            {
+                "id": 16,
+                "type": "output",
+                "ports": [
+                    {
+                        "id": "p16_in_front",
+                        "direction": "input",
+                        "tensor": {
+                            "dtype": "uint8",
+                            "shape": null
+                        },
+                        "format": {
+                            "color": "BGR",
+                            "encoding": "raw"
+                        },
+                        "framerate": null
+                    },
+                    {
+                        "id": "p16_in_rear",
+                        "direction": "input",
+                        "tensor": {
+                            "dtype": "uint8",
+                            "shape": null
+                        },
+                        "format": {
+                            "color": "BGR",
+                            "encoding": "raw"
+                        },
+                        "framerate": null
+                    }
+                ],
+                "name": "file",
+                "url": "file:///home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/out/annotated_dual.mp4",
+                "resolution": null,
+                "output_type": "tiled",
+                "grid": [
+                    1,
+                    2
+                ],
+                "description": "Write tiled dual-stream video to MP4 file",
+                "pseudo_code": "import cv2\nimport numpy as np\n\ndef tiled_writer(frame_a, frame_b, out_path, fps=30):\n    h = max(frame_a.shape[0], frame_b.shape[0])\n    w = frame_a.shape[1] + frame_b.shape[1]\n    fourcc = cv2.VideoWriter_fourcc(*'mp4v')\n    vw = cv2.VideoWriter(out_path, fourcc, fps, (w, h))\n    canvas = np.zeros((h, w, 3), dtype=np.uint8)\n    canvas[:frame_a.shape[0], :frame_a.shape[1]] = frame_a\n    canvas[:frame_b.shape[0], frame_a.shape[1]:frame_a.shape[1]+frame_b.shape[1]] = frame_b\n    vw.write(canvas)\n    vw.release()\n"
+            }
+        ],
+        "connections": [
+            [
+                "p1_out",
+                "p3_in"
+            ],
+            [
+                "p3_out",
+                "p4_in"
+            ],
+            [
+                "p4_out",
+                "p5_in"
+            ],
+            [
+                "p2_out",
+                "p6_in"
+            ],
+            [
+                "p6_out",
+                "p7_in"
+            ],
+            [
+                "p7_out",
+                "p8_in"
+            ],
+            [
+                "p1_out",
+                "p9_in"
+            ],
+            [
+                "p9_out",
+                "p10_in"
+            ],
+            [
+                "p10_out",
+                "p11_in"
+            ],
+            [
+                "p2_out",
+                "p12_in"
+            ],
+            [
+                "p12_out",
+                "p13_in"
+            ],
+            [
+                "p13_out",
+                "p14_in"
+            ],
+            [
+                "p5_out",
+                "p15_in_det_front"
+            ],
+            [
+                "p8_out",
+                "p15_in_det_rear"
+            ],
+            [
+                "p1_out",
+                "p16_in_front"
+            ],
+            [
+                "p2_out",
+                "p16_in_rear"
+            ],
+            [
+                "p11_out",
+                "p16_in_front"
+            ],
+            [
+                "p14_out",
+                "p16_in_rear"
+            ]
+        ]
+    },
+    "loop": {
+        "next_file": "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/src1/ONNX-YOLOv8-Object-Detection/video_object_detection.py",
+        "next_task": "Inspecting video_object_detection.py to extract exact frame loop, drawing/annotation flow, and any output writer settings from /home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/src1/ONNX-YOLOv8-Object-Detection/video_object_detection.py",
+        "target_function": {
+            "name": "read_file",
+            "parameters": {
+                "file_path": "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/src1/ONNX-YOLOv8-Object-Detection/video_object_detection.py",
+                "encoding": "utf-8"
+            }
+        },
+        "visited_steps": [
+            "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/src1/ONNX-YOLOv8-Object-Detection",
+            "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/src2/ONNX-MiDaS-Depth-Estimation/video_depth_estimation.py",
+            "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/src2/ONNX-MiDaS-Depth-Estimation/models/midas_v21_small.onnx",
+            "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/src2/ONNX-MiDaS-Depth-Estimation/video_depth_estimation.py",
+            "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/src1/ONNX-YOLOv8-Object-Detection/yolov8/YOLOv8.py",
+            "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/src1/ONNX-YOLOv8-Object-Detection/yolov8/utils.py",
+            "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/src1/ONNX-YOLOv8-Object-Detection/yolov8/YOLOv8.py",
+            "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/src1/ONNX-YOLOv8-Object-Detection/yolov8/YOLOv8.py",
+            "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/src1/ONNX-YOLOv8-Object-Detection/yolov8/utils.py",
+            "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/src1/ONNX-YOLOv8-Object-Detection/video_object_detection.py",
+            "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/src1/ONNX-YOLOv8-Object-Detection/video_object_detection.py"
+        ],
+        "projectTree": {
+            "_summary": "<repo tree already built \u2014 1 files; use build_py_repo_tree again only if you need a fresh scan>"
+        }
+    }
+}

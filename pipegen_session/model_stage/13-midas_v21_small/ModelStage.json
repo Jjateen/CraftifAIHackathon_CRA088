@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "steps": {
+    "visualize": {
+      "step": "visualize",
+      "status": "ok",
+      "summary": "275 nodes \u00b7 every operator is one TensorRT can take",
+      "detail": "",
+      "data": {
+        "model_path": "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/src2/ONNX-MiDaS-Depth-Estimation/models/midas_v21_small.onnx",
+        "nodes": 275,
+        "blocking": [],
+        "surgery_applied": false,
+        "exported_path": ""
+      },
+      "warnings": [],
+      "artifacts": {},
+      "recorded_at": 1786184824.1226058
+    },
+    "compile": {
+      "step": "compile",
+      "status": "blocked",
+      "summary": "Engine build cancelled \u2014 the partial .plan was deleted.",
+      "detail": "",
+      "data": {},
+      "warnings": [
+        "Engine build cancelled \u2014 the partial .plan was deleted."
+      ],
+      "artifacts": {},
+      "recorded_at": 1786184830.1449645
+    }
+  },
+  "constraint": {},
+  "choices": {}
+}

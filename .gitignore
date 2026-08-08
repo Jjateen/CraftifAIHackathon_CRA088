@@ -5,6 +5,10 @@ build/
 *.engine
 *.plan
 *.onnx
+*.pt
+*.weights
+*.cache
 *.tar.gz
 videos/*/
 !videos/download.sh
+# keep demos + the full pipegen session text records; ignore heavy model files everywhere

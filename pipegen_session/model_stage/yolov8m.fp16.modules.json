@@ -1,0 +1,130 @@
+{
+  "blocks": [
+    {
+      "name": "Input / stem",
+      "operations": "Input cast to FP16, stride-2 Conv + SiLU",
+      "precision": "FP16/FP32 mix",
+      "time_ms": 0.208622,
+      "pct": 5.95,
+      "start_index": 0,
+      "end_index": 8,
+      "layer_count": 9
+    },
+    {
+      "name": "Backbone stage 1 (C2f, 120x160)",
+      "operations": "C2f: 2x bottleneck (Conv+SiLU+residual)",
+      "precision": "FP16",
+      "time_ms": 0.342153,
+      "pct": 9.75,
+      "start_index": 9,
+      "end_index": 23,
+      "layer_count": 15
+    },
+    {
+      "name": "Backbone stage 2 (C2f deep, 60x80)",
+      "operations": "Downsample Conv(stride-2) + 4x bottleneck C2f",
+      "precision": "FP16",
+      "time_ms": 0.507168,
+      "pct": 14.46,
+      "start_index": 24,
+      "end_index": 47,
+      "layer_count": 24
+    },
+    {
+      "name": "Backbone stage 3 (C2f deep, 30x40)",
+      "operations": "Downsample Conv(stride-2) + 4x bottleneck C2f",
+      "precision": "FP16",
+      "time_ms": 0.480336,
+      "pct": 13.69,
+      "start_index": 48,
+      "end_index": 74,
+      "layer_count": 27
+    },
+    {
+      "name": "Backbone stage 4 (C2f + SPPF, 15x20)",
+      "operations": "Downsample Conv + C2f + SPPF maxpool pyramid",
+      "precision": "FP16",
+      "time_ms": 0.403154,
+      "pct": 11.49,
+      "start_index": 75,
+      "end_index": 101,
+      "layer_count": 27
+    },
+    {
+      "name": "Neck upsample 30x40 (PAN top-down)",
+      "operations": "Upsample + concat + lightweight C2f",
+      "precision": "FP16",
+      "time_ms": 0.271619,
+      "pct": 7.74,
+      "start_index": 102,
+      "end_index": 110,
+      "layer_count": 9
+    },
+    {
+      "name": "Neck upsample 60x80 (PAN top-down)",
+      "operations": "Upsample + concat + lightweight C2f",
+      "precision": "FP16",
+      "time_ms": 0.295046,
+      "pct": 8.41,
+      "start_index": 111,
+      "end_index": 120,
+      "layer_count": 10
+    },
+    {
+      "name": "Neck downsample 30x40 (PAN bottom-up fusion)",
+      "operations": "Stride-2 Conv + C2f fusion from 60x80",
+      "precision": "FP16",
+      "time_ms": 0.428915,
+      "pct": 12.23,
+      "start_index": 121,
+      "end_index": 142,
+      "layer_count": 22
+    },
+    {
+      "name": "Neck downsample 15x20 (PAN bottom-up fusion)",
+      "operations": "Stride-2 Conv + C2f fusion from 30x40",
+      "precision": "FP16/FP32 mix",
+      "time_ms": 0.312283,
+      "pct": 8.9,
+      "start_index": 143,
+      "end_index": 166,
+      "layer_count": 24
+    },
+    {
+      "name": "Detection heads convs (all three scales)",
+      "operations": "Per-scale classification and box conv heads",
+      "precision": "FP16/FP32 mix",
+      "time_ms": 0.169259,
+      "pct": 4.82,
+      "start_index": 167,
+      "end_index": 179,
+      "layer_count": 13
+    },
+    {
+      "name": "DFL head and logistic class activation",
+      "operations": "DFL reshape+softmax+conv and sigmoid on logits",
+      "precision": "FP16",
+      "time_ms": 0.051354,
+      "pct": 1.46,
+      "start_index": 180,
+      "end_index": 187,
+      "layer_count": 8
+    },
+    {
+      "name": "Box decoding and final output formatting",
+      "operations": "Elementwise box transforms and casts to FP32",
+      "precision": "FP16/FP32 mix",
+      "time_ms": 0.038512,
+      "pct": 1.1,
+      "start_index": 188,
+      "end_index": 198,
+      "layer_count": 11
+    }
+  ],
+  "source": "reasoner",
+  "architecture": "YOLOv8-style object detector: CSP-like backbone + PAN/FPN neck + DFL head with box decoding",
+  "total_ms": 3.508422,
+  "layer_count": 199,
+  "warnings": [],
+  "fingerprint": "199:3.508:/model.22/Constant_9_output_0:/model.22/Mul_2_output_0 copy"
+}

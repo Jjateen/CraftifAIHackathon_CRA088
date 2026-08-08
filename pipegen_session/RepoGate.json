@@ -1,0 +1,459 @@
+{
+    "sources": [
+        {
+            "source_id": "src1",
+            "source_kind": "benchmark",
+            "subfolder": "ONNX-YOLOv8-Object-Detection",
+            "project_path": "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/src1/ONNX-YOLOv8-Object-Detection",
+            "covers_tasks": [
+                "vehicle_detection@input1",
+                "vehicle_detection@input2"
+            ],
+            "verdict": {
+                "status": "pass",
+                "hard_violations": [],
+                "warnings": [],
+                "prompt_specific_rules": [],
+                "repo_type": "object-detection",
+                "alignment_score": 95,
+                "summary": "A clean ONNX-Runtime YOLOv8 object-detection pipeline with no wrapper frameworks, directly matching the assigned vehicle_detection tasks for both camera inputs.",
+                "scope_rules": [
+                    {
+                        "id": "S1",
+                        "passed": true,
+                        "reason": "Repo runs YOLOv8 ONNX inference for object detection on images/video/webcam with a clear input\u2192preprocess\u2192inference\u2192postprocess\u2192output flow."
+                    },
+                    {
+                        "id": "S2",
+                        "passed": true,
+                        "reason": "The local `yolov8` package is a thin in-repo wrapper (not an installed high-level framework); imports list shows only cv2, numpy, onnxruntime, and lightweight utilities \u2014 no ultralytics, mmdet, transformers, etc."
+                    },
+                    {
+                        "id": "S3",
+                        "passed": true,
+                        "reason": "requirements.txt lists only opencv-python, imread-from-url, onnxruntime-gpu, and cap-from-youtube \u2014 no alternative inference engines such as TensorFlow, JAX, or TensorRT-only paths."
+                    },
+                    {
+                        "id": "S4",
+                        "passed": true,
+                        "reason": "ext_counts shows only .py, .txt, .md, .onnx, .sh, .jpg, .gif files; other_language_files count is 0, confirming no C/C++/CUDA or other non-Python source."
+                    }
+                ],
+                "usage": {
+                    "model": "claude-sonnet-4-6",
+                    "input_tokens": 4368,
+                    "output_tokens": 394
+                }
+            }
+        },
+        {
+            "source_id": "src2",
+            "source_kind": "benchmark",
+            "subfolder": "ONNX-MiDaS-Depth-Estimation",
+            "project_path": "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/src2/ONNX-MiDaS-Depth-Estimation",
+            "covers_tasks": [
+                "depth_estimation@input1",
+                "depth_estimation@input2"
+            ],
+            "verdict": {
+                "status": "pass",
+                "hard_violations": [],
+                "warnings": [],
+                "prompt_specific_rules": [],
+                "repo_type": "depth-estimation",
+                "alignment_score": 82,
+                "summary": "MiDaS small ONNX depth-estimation pipeline is fully within PipeGen scope and aligns well with the assigned depth_estimation tasks for both camera inputs.",
+                "scope_rules": [
+                    {
+                        "id": "S1",
+                        "passed": true,
+                        "reason": "Architecture graph and imports (onnxruntime, cv2, numpy) confirm a clear input\u2192preprocess\u2192ONNX inference\u2192postprocess\u2192output depth-estimation pipeline."
+                    },
+                    {
+                        "id": "S2",
+                        "passed": true,
+                        "reason": "No high-level wrapper framework detected; wrapper_imports is empty and inference runs directly via onnxruntime.InferenceSession on midas_v21_small.onnx."
+                    },
+                    {
+                        "id": "S3",
+                        "passed": true,
+                        "reason": "Only onnxruntime/onnxruntime-gpu are used as inference runtimes; no tensorflow, jax, openvino, or tflite-runtime is present in imports or requirements.txt."
+                    },
+                    {
+                        "id": "S4",
+                        "passed": true,
+                        "reason": "File-type counts show only .py, .txt, .md, .sh, and .onnx files; other_language_files is empty with zero C/C++/CUDA or other non-Python source files."
+                    }
+                ],
+                "usage": {
+                    "model": "claude-sonnet-4-6",
+                    "input_tokens": 3447,
+                    "output_tokens": 365
+                }
+            }
+        },
+        {
+            "source_id": "src3",
+            "source_kind": "benchmark",
+            "subfolder": null,
+            "project_path": "/home/jjateen/personal/pipegen/adas-lite/thirdparty/clrnet",
+            "covers_tasks": [
+                "lane_detection@input1"
+            ],
+            "verdict": {
+                "status": "blocked",
+                "hard_violations": [
+                    {
+                        "rule": "paths_exist",
+                        "reason": "Model path(s) not found on disk: /home/jjateen/personal/pipegen/adas-lite/thirdparty/clrnet/models/clrnet_r18_culane.onnx"
+                    }
+                ],
+                "warnings": [],
+                "prompt_specific_rules": [],
+                "repo_type": "unsupported",
+                "alignment_score": 0,
+                "summary": "Referenced paths are missing.",
+                "scope_rules": [],
+                "usage": {
+                    "model": "claude-sonnet-4-6",
+                    "input_tokens": 0,
+                    "output_tokens": 0
+                }
+            }
+        },
+        {
+            "source_id": "src4",
+            "source_kind": "benchmark",
+            "subfolder": null,
+            "project_path": "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/src3/onnx-Ultra-Fast-Lane-Detection-Inference",
+            "covers_tasks": [
+                "lane_detection@input1"
+            ],
+            "verdict": {
+                "status": "warning",
+                "hard_violations": [],
+                "warnings": [
+                    {
+                        "issue": "Repo core task is monocular depth estimation (MiDaS), but the assigned task is lane_detection@input1 \u2014 these are fundamentally different CV tasks.",
+                        "suggestion": "Replace this repo with an ONNX-based lane detection inference repo (e.g. one using Ultra-Fast-Lane-Detection or CLRNet exported to ONNX and run directly via onnxruntime) that outputs lane polylines or lane masks."
+                    }
+                ],
+                "prompt_specific_rules": [],
+                "repo_type": "depth-estimation",
+                "alignment_score": 12,
+                "summary": "This repo is a MiDaS ONNX depth-estimation pipeline, not a lane-detection pipeline \u2014 it is clearly misaligned with the assigned task of lane_detection@input1.",
+                "scope_rules": [
+                    {
+                        "id": "S1",
+                        "passed": true,
+                        "reason": "Architecture graph and code confirm a video-frame \u2192 preprocess \u2192 ONNX Runtime inference \u2192 postprocess depth-map pipeline, which is a valid CV inference use case."
+                    },
+                    {
+                        "id": "S2",
+                        "passed": true,
+                        "reason": "Dependency manifest lists only opencv-python, scipy, onnx, onnxruntime; no high-level wrapper framework is present in imports or requirements."
+                    },
+                    {
+                        "id": "S3",
+                        "passed": true,
+                        "reason": "Inference runs exclusively via onnxruntime (InferenceSession); no alternative runtime such as tensorflow, jax, or tflite is imported or listed."
+                    },
+                    {
+                        "id": "S4",
+                        "passed": true,
+                        "reason": "ext_counts shows only .py, .md, .txt, .sh, .onnx, .jpg, .engine files; other_language_files reports zero non-Python source files."
+                    }
+                ],
+                "usage": {
+                    "model": "claude-sonnet-4-6",
+                    "input_tokens": 4286,
+                    "output_tokens": 438
+                }
+            }
+        },
+        {
+            "source_id": "src5",
+            "source_kind": "benchmark",
+            "subfolder": null,
+            "project_path": "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/src3/onnx-Ultra-Fast-Lane-Detection-Inference",
+            "covers_tasks": [
+                "lane_detection@input1"
+            ],
+            "verdict": {
+                "status": "pass",
+                "hard_violations": [],
+                "warnings": [],
+                "prompt_specific_rules": [],
+                "repo_type": "lane-detection",
+                "alignment_score": 82,
+                "summary": "The repository is an ONNX-based Ultra Fast Lane Detection inference pipeline that directly matches the assigned lane_detection@input1 task, though the architecture graph describes a MiDaS depth-estimation pipeline due to a path mix-up; the imports, model file (ufld.onnx), and project name confirm lane detection intent.",
+                "scope_rules": [
+                    {
+                        "id": "S1",
+                        "passed": true,
+                        "reason": "Project name 'onnx-Ultra-Fast-Lane-Detection-Inference', model file 'ufld.onnx', and import 'ultrafastLaneDetector' confirm this is a CV inference pipeline for lane detection."
+                    },
+                    {
+                        "id": "S2",
+                        "passed": true,
+                        "reason": "Dependency manifest lists only opencv-python, scipy, onnx, and onnxruntime; no high-level wrapper or training framework is present in imports or requirements.txt."
+                    },
+                    {
+                        "id": "S3",
+                        "passed": true,
+                        "reason": "Inference runs via onnxruntime (explicit import and requirements.txt entry); no alternative inference engine such as TensorFlow, JAX, or TensorRT-only path is evidenced."
+                    },
+                    {
+                        "id": "S4",
+                        "passed": true,
+                        "reason": "File-type counts show only .py, config, and asset files; other_language_files list is empty with zero non-Python source files found."
+                    }
+                ],
+                "usage": {
+                    "model": "claude-sonnet-4-6",
+                    "input_tokens": 4185,
+                    "output_tokens": 394
+                }
+            }
+        },
+        {
+            "source_id": "src6",
+            "source_kind": "benchmark",
+            "subfolder": null,
+            "project_path": "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/src4/onnx-Ultra-Fast-Lane-Detection-Inference",
+            "covers_tasks": [
+                "lane_detection@input1"
+            ],
+            "verdict": {
+                "status": "warning",
+                "hard_violations": [],
+                "warnings": [
+                    {
+                        "issue": "Repo core task is monocular depth estimation (MiDaS); assigned task is lane_detection@input1 \u2014 these are fundamentally different CV tasks.",
+                        "suggestion": "Replace this source with a lane-detection repo built on an ONNX model such as Ultra-Fast-Lane-Detection or LaneATT, which directly detects lane markings rather than estimating depth."
+                    }
+                ],
+                "prompt_specific_rules": [],
+                "repo_type": "depth-estimation",
+                "alignment_score": 10,
+                "summary": "This repository is a MiDaS ONNX depth-estimation pipeline, not a lane-detection pipeline, so it fails alignment with the assigned task of lane_detection@input1.",
+                "scope_rules": [
+                    {
+                        "id": "S1",
+                        "passed": true,
+                        "reason": "Architecture graph and analysis summaries confirm a runnable CV inference pipeline (MiDaS depth estimation via ONNX Runtime on video frames)."
+                    },
+                    {
+                        "id": "S2",
+                        "passed": true,
+                        "reason": "Imports list shows onnxruntime as the inference engine with no high-level wrapper framework detected in wrapper_imports or dependency manifests."
+                    },
+                    {
+                        "id": "S3",
+                        "passed": true,
+                        "reason": "requirements.txt lists only opencv-python, scipy, onnx, and onnxruntime \u2014 no alternative inference runtimes present."
+                    },
+                    {
+                        "id": "S4",
+                        "passed": true,
+                        "reason": "ext_counts shows only .py, .md, .txt, .sh, .onnx, .jpg, and .engine files; other_language_files reports zero non-Python source files."
+                    }
+                ],
+                "usage": {
+                    "model": "claude-sonnet-4-6",
+                    "input_tokens": 4212,
+                    "output_tokens": 408
+                }
+            }
+        },
+        {
+            "source_id": "src7",
+            "source_kind": "benchmark",
+            "subfolder": null,
+            "project_path": "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/src4/onnx-Ultra-Fast-Lane-Detection-Inference",
+            "covers_tasks": [
+                "ALL"
+            ],
+            "verdict": {
+                "status": "warning",
+                "hard_violations": [],
+                "warnings": [
+                    {
+                        "issue": "Repo performs lane detection only (Ultra-Fast Lane Detection); the user's prompt requires simultaneous vehicle detection (for forward collision warning, adaptive cruise assist, and blind-spot monitoring) alongside lane detection \u2014 the vehicle-detection task is entirely absent.",
+                        "suggestion": "Use a repository that combines lane detection with a lightweight ONNX vehicle-detection model (e.g., YOLOv8n or NanoDet ONNX) in a single pipeline, or add a second ONNX Runtime inference node for vehicle detection to this repo before compilation."
+                    }
+                ],
+                "prompt_specific_rules": [],
+                "repo_type": "lane-detection",
+                "alignment_score": 30,
+                "summary": "Repo is a valid ONNX-based lane-detection inference pipeline, but it performs lane detection only \u2014 not the vehicle detection (ADAS blind-spot, forward collision) the user also requires \u2014 and the architecture graph describes a MiDaS depth-estimation pipeline inconsistent with the repo name and ONNX model, reducing confidence; A1 fails because the core task is lane detection alone versus the user's multi-task ADAS requirement including vehicle detection.",
+                "scope_rules": [
+                    {
+                        "id": "S1",
+                        "passed": true,
+                        "reason": "Repo name, `ultrafastLaneDetector` import, and `ufld.onnx` model file all indicate a computer-vision inference pipeline (lane detection)."
+                    },
+                    {
+                        "id": "S2",
+                        "passed": true,
+                        "reason": "No high-level wrapper frameworks detected in `wrapper_imports` or `imports`; `onnxruntime` and raw `torch`/`torchvision` are the only inference-relevant dependencies."
+                    },
+                    {
+                        "id": "S3",
+                        "passed": true,
+                        "reason": "Only `onnxruntime` is present as an inference runtime; no TensorFlow, JAX, OpenVINO, or other alternative engines appear in imports or requirements.txt."
+                    },
+                    {
+                        "id": "S4",
+                        "passed": true,
+                        "reason": "`other_language_files` count is 0 and `ext_counts` shows only .py, .md, .txt, .sh, .onnx, .jpg, and .engine \u2014 no C/C++/CUDA/Cython source files."
+                    }
+                ],
+                "usage": {
+                    "model": "claude-sonnet-4-6",
+                    "input_tokens": 3156,
+                    "output_tokens": 564
+                }
+            }
+        },
+        {
+            "source_id": "src8",
+            "source_kind": "benchmark",
+            "subfolder": null,
+            "project_path": "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/src1/ONNX-YOLOv8-Object-Detection",
+            "covers_tasks": [
+                "ALL"
+            ],
+            "verdict": {
+                "status": "warning",
+                "hard_violations": [],
+                "warnings": [
+                    {
+                        "issue": "The user requires a dual-camera ADAS pipeline with lane detection AND vehicle detection (front) plus vehicle detection (rear/blind-spot); this repo provides generic object detection only (no lane detection capability), and the architecture graph describes a MiDaS depth-estimation pipeline\u2014not the requested ADAS tasks.",
+                        "suggestion": "Use a repository that combines an ONNX-based lane-detection model (e.g. UFLD or LaneATT exported to ONNX) with a lightweight ONNX object-detection model (e.g. YOLOv8n), wired together in a single Python inference script with dual-camera input handling."
+                    }
+                ],
+                "prompt_specific_rules": [],
+                "repo_type": "object-detection",
+                "alignment_score": 42,
+                "summary": "The repository is a valid ONNX-based YOLOv8 object-detection pipeline that passes all scope rules, but the architecture graph describes a MiDaS depth-estimation pipeline rather than the vehicle-detection + lane-detection ADAS pipeline the user requested, causing a task-alignment mismatch.",
+                "scope_rules": [
+                    {
+                        "id": "S1",
+                        "passed": true,
+                        "reason": "The repo name, model file (yolov8m.onnx), and scripts (video_object_detection.py, webcam_object_detection.py) confirm a CV inference pipeline for object detection."
+                    },
+                    {
+                        "id": "S2",
+                        "passed": true,
+                        "reason": "Imports are cap_from_youtube, cv2, imread_from_url, numpy, onnxruntime, time, yolov8 (internal package), with no high-level wrapper framework detected in wrapper_imports or dependency_files."
+                    },
+                    {
+                        "id": "S3",
+                        "passed": true,
+                        "reason": "requirements.txt lists only opencv-python, imread-from-url, onnxruntime-gpu, and cap-from-youtube; no alternative inference runtime (TensorFlow, JAX, TensorRT-only, OpenVINO, etc.) is present."
+                    },
+                    {
+                        "id": "S4",
+                        "passed": true,
+                        "reason": "ext_counts shows only .py, .txt, .md, .onnx, .sh, .jpg, .gif files and other_language_files is empty, confirming a Python-only codebase."
+                    }
+                ],
+                "usage": {
+                    "model": "claude-sonnet-4-6",
+                    "input_tokens": 3742,
+                    "output_tokens": 582
+                }
+            }
+        },
+        {
+            "source_id": "src9",
+            "source_kind": "benchmark",
+            "subfolder": null,
+            "project_path": "/home/jjateen/.pipegen/jjateen97/81a5670e-0f65-4a7c-b218-95fe113eee09/src4/onnx-Ultra-Fast-Lane-Detection-Inference",
+            "covers_tasks": [
+                "ALL"
+            ],
+            "verdict": {
+                "status": "blocked",
+                "hard_violations": [
+                    {
+                        "rule": "S2",
+                        "reason": "Uses a high-level wrapper framework: requirements.txt and imports include `timm` (a high-level model-hub wrapper that hides model loading behind a one-call API), which is a recognized high-level wrapper framework."
+                    },
+                    {
+                        "rule": "S4",
+                        "reason": "Contains non-Python source code: ext_counts shows a `.engine` file, which is a TensorRT compiled binary implying a non-Python build artifact / alternative runtime beyond ONNX Runtime."
+                    }
+                ],
+                "warnings": [],
+                "prompt_specific_rules": [],
+                "repo_type": "lane-detection / depth-estimation",
+                "alignment_score": 18,
+                "summary": "The repository is a lane-detection + depth-estimation combo that does not perform vehicle detection, blind-spot monitoring, or collision warning \u2014 the core tasks the user requires \u2014 and the architecture graph confirms only a MiDaS depth pipeline is wired up, not the vehicle-detection models needed for ADAS safety functions.",
+                "scope_rules": [
+                    {
+                        "id": "S1",
+                        "passed": true,
+                        "reason": "The repo runs ONNX-based CV inference (Ultra-Fast Lane Detection + MiDaS depth) on video frames, which is a valid vision-inference pipeline purpose."
+                    },
+                    {
+                        "id": "S2",
+                        "passed": false,
+                        "reason": "requirements.txt and imports include `timm` (a high-level model-hub wrapper that hides model loading behind a one-call API), which is a recognized high-level wrapper framework."
+                    },
+                    {
+                        "id": "S3",
+                        "passed": true,
+                        "reason": "Inference is performed exclusively via onnxruntime as confirmed by imports and requirements.txt; no alternative inference engine (tensorflow, tflite, openvino, etc.) is present."
+                    },
+                    {
+                        "id": "S4",
+                        "passed": false,
+                        "reason": "ext_counts shows a `.engine` file, which is a TensorRT compiled binary implying a non-Python build artifact / alternative runtime beyond ONNX Runtime."
+                    }
+                ],
+                "usage": {
+                    "model": "claude-sonnet-4-6",
+                    "input_tokens": 4237,
+                    "output_tokens": 498
+                }
+            }
+        }
+    ],
+    "overall_status": "blocked",
+    "status": "blocked",
+    "hard_violations": [
+        {
+            "rule": "paths_exist",
+            "reason": "Model path(s) not found on disk: /home/jjateen/personal/pipegen/adas-lite/thirdparty/clrnet/models/clrnet_r18_culane.onnx"
+        },
+        {
+            "rule": "S2",
+            "reason": "Uses a high-level wrapper framework: requirements.txt and imports include `timm` (a high-level model-hub wrapper that hides model loading behind a one-call API), which is a recognized high-level wrapper framework."
+        },
+        {
+            "rule": "S4",
+            "reason": "Contains non-Python source code: ext_counts shows a `.engine` file, which is a TensorRT compiled binary implying a non-Python build artifact / alternative runtime beyond ONNX Runtime."
+        }
+    ],
+    "warnings": [
+        {
+            "issue": "Repo core task is monocular depth estimation (MiDaS), but the assigned task is lane_detection@input1 \u2014 these are fundamentally different CV tasks.",
+            "suggestion": "Replace this repo with an ONNX-based lane detection inference repo (e.g. one using Ultra-Fast-Lane-Detection or CLRNet exported to ONNX and run directly via onnxruntime) that outputs lane polylines or lane masks."
+        },
+        {
+            "issue": "Repo core task is monocular depth estimation (MiDaS); assigned task is lane_detection@input1 \u2014 these are fundamentally different CV tasks.",
+            "suggestion": "Replace this source with a lane-detection repo built on an ONNX model such as Ultra-Fast-Lane-Detection or LaneATT, which directly detects lane markings rather than estimating depth."
+        },
+        {
+            "issue": "Repo performs lane detection only (Ultra-Fast Lane Detection); the user's prompt requires simultaneous vehicle detection (for forward collision warning, adaptive cruise assist, and blind-spot monitoring) alongside lane detection \u2014 the vehicle-detection task is entirely absent.",
+            "suggestion": "Use a repository that combines lane detection with a lightweight ONNX vehicle-detection model (e.g., YOLOv8n or NanoDet ONNX) in a single pipeline, or add a second ONNX Runtime inference node for vehicle detection to this repo before compilation."
+        },
+        {
+            "issue": "The user requires a dual-camera ADAS pipeline with lane detection AND vehicle detection (front) plus vehicle detection (rear/blind-spot); this repo provides generic object detection only (no lane detection capability), and the architecture graph describes a MiDaS depth-estimation pipeline\u2014not the requested ADAS tasks.",
+            "suggestion": "Use a repository that combines an ONNX-based lane-detection model (e.g. UFLD or LaneATT exported to ONNX) with a lightweight ONNX object-detection model (e.g. YOLOv8n), wired together in a single Python inference script with dual-camera input handling."
+        }
+    ],
+    "prompt_specific_rules": []
+}
